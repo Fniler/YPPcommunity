@@ -5,7 +5,7 @@ using System.Text;
 
 namespace YPPcommand
 {
-    class Student : Exam
+    class Student 
     {
         private Person info;
         private Education education;
@@ -30,7 +30,7 @@ namespace YPPcommand
 
         public Person Info
         {
-            get { return info; } 
+            get { return info; }
             set { info = value; }
         }
 
@@ -46,15 +46,52 @@ namespace YPPcommand
         }
 
         public double AVG
-        { 
-            get 
+        {
+            get
             {
                 for (int i = 0; i < exams.Length; i++)
                 {
                     AVGsum += exams[i].Otsenka;
                 }
                 return AVGsum / exams.Length;
-            } 
+            }
+        }
+        public bool this[Education educa]
+        {
+            get
+            {
+                return education == educa;
+            }
+        }
+        public void AddExams(params Exam[] newexam)
+        {
+            if (newexam == null || newexam.Length == 0)
+            {
+                return; 
+            }
+            int starayadlina = exams.Length;
+            Array.Resize(ref exams, starayadlina + newexam.Length);
+            for (int i = 0; i < newexam.Length; i++)
+            {
+                exams[starayadlina + i] = newexam[i];
+            }
+        }
+        public override string ToString()
+        {
+            if (exams == null || exams.Length == 0)
+            {
+                return $"Студент: {info}, Форма обучения: {education}, Группа: {nomergruppi}\nЭкзамены: нет";
+            }
+            string rez = $"Студент: {info}, Форма обучения: {education}, Группа: {nomergruppi}\n";
+            foreach (var exam in exams)
+            {
+                rez+= exam.ToString();
+            }
+            return rez;
+        }
+        public virtual string ToShortString()
+        {
+            return $"Студент: {info}, Форма обучения: {education}, Группа: {nomergruppi}, Средний балл: {AVG}";
         }
     }
 }
