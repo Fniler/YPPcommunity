@@ -34,9 +34,11 @@ static void Main()
             MD2.SetValue(new Person(),i,j);
         }
     }
-    int startTime = Environment.TickCount;
+    int start = Environment.TickCount;
     foreach(var item in MD1)
     {
-
+        item.Year = 100;
     }
+    int end = Environment.TickCount;
+    ggggggggggg
 }
