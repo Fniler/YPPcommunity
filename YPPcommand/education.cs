@@ -4,8 +4,6 @@ using System.Text;
 
 namespace YPPcommand
 {
-    internal class education
-    {
         enum Education
         {
             Specialist,
@@ -13,4 +11,3 @@ namespace YPPcommand
             SecondEducation,
         }
     }
-}

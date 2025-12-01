@@ -4,9 +4,8 @@ using System.Text;
 
 namespace YPPcommand
 {
-    internal class exam
-    {
-        class Exam
+    class Exam
+
         {
             public string Namepredmet { get; set; }
             public int Otsenka { get; set; }
@@ -30,4 +29,4 @@ namespace YPPcommand
             }
         }
     }
-}
+
