@@ -13,21 +13,29 @@ namespace YPPcommand
         private Exam[] exams;
         private double AVGsum;
 
-        public Student(Person info, Education education, int nomergruppi, Exam[] exams)
+        
+        public Student(Person info, Education education, int nomergruppi)
         {
             this.info = info;
             this.education = education;
             this.nomergruppi = nomergruppi;
         }
 
+        public Student(Person info, Education education, int nomergruppi,params Exam[] exams):this(info,education,nomergruppi)
+        {
+            this.exams = exams;
+        }
         public Student()
         {
             info = new Person();
             education = Education.Specialist;
             nomergruppi = 4;
-            exams = new Exam[3];
+            exams = new Exam[0];
         }
-
+        public Exam[] Exams
+        {
+            get { return exams; }
+        }
         public Person Info
         {
             get { return info; }
@@ -37,6 +45,7 @@ namespace YPPcommand
         public Education Education
         {
             get { return education; }
+            set { education = value; }
         }
 
         public int Nomergruppi
@@ -49,31 +58,41 @@ namespace YPPcommand
         {
             get
             {
-                for (int i = 0; i < exams.Length; i++)
+                if(exams!=null)
                 {
-                    AVGsum += exams[i].Otsenka;
+                    AVGsum = 0;
+                    for (int i = 0; i < exams.Length; i++)
+                    {
+                        AVGsum += exams[i].Otsenka;
+                    }
+                    return AVGsum / exams.Length;
                 }
-                return AVGsum / exams.Length;
+                else
+                { return 0; }
             }
         }
         public bool this[Education educa]
         {
             get
             {
-                return education == educa;
+                return this.education == educa;
             }
         }
         public void AddExams(params Exam[] newexam)
         {
             if (newexam == null || newexam.Length == 0)
             {
-                return; 
+                return;
             }
-            int starayadlina = exams.Length;
-            Array.Resize(ref exams, starayadlina + newexam.Length);
+            if (exams == null)
+            {
+                exams = new Exam[0];
+            }
+            int oldLength = exams.Length;
+            Array.Resize(ref exams, oldLength + newexam.Length);
             for (int i = 0; i < newexam.Length; i++)
             {
-                exams[starayadlina + i] = newexam[i];
+                exams[oldLength + i] = newexam[i];
             }
         }
         public override string ToString()
@@ -85,7 +104,10 @@ namespace YPPcommand
             string rez = $"Студент: {info}, Форма обучения: {education}, Группа: {nomergruppi}\n";
             foreach (var exam in exams)
             {
-                rez+= exam.ToString();
+                if(exam != null)
+                {
+                    rez += exam.ToString()+"\n";
+                }
             }
             return rez;
         }

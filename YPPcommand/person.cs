@@ -70,7 +70,7 @@ namespace YPPcommand
             {
                 if(value > 0 )
                 {
-                    birthday = birthday.AddYears(value);
+                    birthday = new DateTime(value, birthday.Month, birthday.Day);
                 }
                 else 
                 {
