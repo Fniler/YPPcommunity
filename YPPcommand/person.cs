@@ -86,5 +86,43 @@ namespace YPPcommand
         {
             return $"Name:{name}|Last name:{last_name}";
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is null || obj is Person) 
+            { return false; }
+            else 
+            {
+                Person t = (Person)obj;
+                if(this.Name.Equals(t.Name) && this.Last_Name.Equals(t.Last_Name) && this.Birthday.Equals(t.Birthday))
+                { return true; }
+                else 
+                { return false; }
+            }
+        }
+        public static bool operator==(Person? t1 , Person? t2)
+        {
+            if(t1 is null || t2 is null) 
+            { return false; }
+            else
+            {
+                if (t1.Name == t2.Name && t1.Last_Name == t2.Last_Name && t1.Birthday == t2.Birthday)
+                { return true; }
+                else
+                { return false; }
+            }
+        }
+        public static bool operator !=(Person? t1, Person? t2)
+        {
+            return !(t1 == t2);
+        }
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Name, Last_Name, Birthday);
+        }
+        public Person DeepCopy()
+        {
+            return new Person(Name, Last_Name, Birthday);
+        }
     }
 }

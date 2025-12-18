@@ -2,7 +2,7 @@
 using YPPcommand;
 
 Main1();
-static void Main()
+static void Main1()
 {
     Console.WriteLine("Введите размерность массива Col - , Row - ");
     string input = Console.ReadLine();
