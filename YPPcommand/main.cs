@@ -66,4 +66,16 @@ static void Main1()
     end = DateTime.Now;
     total = end - start;
     Console.WriteLine($"Конец испытания время:{total}");
+
+    Student p1 = new Student();
+
+    foreach(object o in p1.GetEnumerable())
+    {
+        Console.WriteLine(o);
+    }
+
+    foreach(Exam ex in p1.GetExamAndZnach())
+    {
+        Console.WriteLine(ex);
+    }
 }

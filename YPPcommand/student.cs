@@ -1,45 +1,93 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace YPPcommand
 {
-    class Student 
+    class Student : Person, IDateAndCopy, IEnumerable
     {
-        private Person info;
         private Education education;
         private int nomergruppi;
         private Exam[] exams;
         private double AVGsum;
+        private DateTime date;
+        private ArrayList examslist = new ArrayList();
 
         
-        public Student(Person info, Education education, int nomergruppi)
+        public Student(string name, string last_name, DateTime birthday, Education education, int nomergruppi, DateTime date, ArrayList examslist):base(name,last_name,birthday)
         {
-            this.info = info;
+            this.name = name;
+            this.last_name = last_name;
+            this.birthday = birthday;
             this.education = education;
             this.nomergruppi = nomergruppi;
+            this.date = date;
+            this.examslist = examslist;
         }
 
-        public Student(Person info, Education education, int nomergruppi,params Exam[] exams):this(info,education,nomergruppi)
+        public Student(string name, string last_name, DateTime birthday, Education education, int nomergruppi, DateTime date,ArrayList examslist,params Exam[] exams):this(name,last_name,birthday,education,nomergruppi, date, examslist) 
         {
             this.exams = exams;
         }
         public Student()
         {
-            info = new Person();
+            Name = name;
             education = Education.Specialist;
             nomergruppi = 4;
             exams = new Exam[0];
+            date = DateTime.Now;
+        }
+        public string Name
+        {
+            get { return name; }
+            set
+            {
+                if (value != null)
+                {
+                    name = value;
+                }
+                else
+                {
+                    throw new Exception("Нет значения");
+                }
+            }
+        }
+        public string Last_Name
+        {
+            get { return last_name; }
+            set
+            {
+                if (value != null)
+                {
+                    last_name = value;
+                }
+                else
+                {
+                    throw new Exception("Нет значения");
+                }
+            }
+        }
+        public DateTime Birthday
+        {
+            get { return birthday; }
+            set
+            {
+                if (value.Year < 120)
+                {
+                    birthday = value;
+                }
+                else
+                {
+                    throw new Exception("Неверное значение");
+                }
+            }
         }
         public Exam[] Exams
         {
             get { return exams; }
-        }
-        public Person Info
-        {
-            get { return info; }
-            set { info = value; }
         }
 
         public Education Education
@@ -51,7 +99,31 @@ namespace YPPcommand
         public int Nomergruppi
         {
             get { return nomergruppi; }
-            set { nomergruppi = value; }
+            set {
+                if (value <= 100 || value > 599)
+                {
+                    throw new Exception();
+                }
+                nomergruppi = value; 
+            }
+        }
+
+        public Person Person
+        {
+            get { return new Person(name, last_name, birthday); }
+            set { name = value.Name; last_name = value.Last_Name; birthday = value.Birthday; }
+        }
+
+        public ArrayList Examslist
+        {
+            get { return examslist; } 
+            set {
+                if (value == null)
+                {
+                    throw new Exception();
+                }
+                examslist = value;
+            }
         }
 
         public double AVG
@@ -71,6 +143,18 @@ namespace YPPcommand
                 { return 0; }
             }
         }
+
+        public DateTime Date
+        {
+            get { return date; }
+            set { date = value; }
+        }
+
+        public object DeepCopy()
+        {
+            return new Student(name, last_name, birthday, education, nomergruppi, date, examslist);
+        }
+
         public bool this[Education educa]
         {
             get
@@ -99,9 +183,9 @@ namespace YPPcommand
         {
             if (exams == null || exams.Length == 0)
             {
-                return $"Студент: {info}, Форма обучения: {education}, Группа: {nomergruppi}\nЭкзамены: нет";
+                return $"Форма обучения: {education}, Группа: {nomergruppi}\nЭкзамены: нет";
             }
-            string rez = $"Студент: {info}, Форма обучения: {education}, Группа: {nomergruppi}\n";
+            string rez = $" Форма обучения: {education}, Группа: {nomergruppi}\n";
             foreach (var exam in exams)
             {
                 if(exam != null)
@@ -113,7 +197,58 @@ namespace YPPcommand
         }
         public virtual string ToShortString()
         {
-            return $"Студент: {info}, Форма обучения: {education}, Группа: {nomergruppi}, Средний балл: {AVG}";
+            return $"Форма обучения: {education}, Группа: {nomergruppi}, Средний балл: {AVG}";
+        }
+
+        public IEnumerable GetEnumerable()
+        {
+            foreach(object obj in examslist)
+            {
+                yield return obj;
+            }
+            foreach(Exam ex in exams)
+            {
+                yield return ex; 
+            }    
+        }
+
+        public IEnumerable GetExamAndZnach()
+        {
+            foreach(Exam ex in exams)
+            {
+                yield return ex;
+            }
+        }
+        public IEnumerator GetEnumerator()
+        {
+            return new StudentEnumerator(examslist, exams);
+        }
+
+        public IEnumerable GetTestsWithPassedExam()
+        {
+            foreach (object test in examslist)
+            {
+                foreach (Exam ex in exams)
+                {
+                    if (test.ToString() == ex.ToString())
+                    {
+                        yield return test;
+                    }
+                }
+            }
+        }
+        public IEnumerable GetIntersectionSubjects()
+        {
+            foreach (object test in examslist)
+            {
+                foreach (Exam ex in exams)
+                {
+                    if (test.ToString() == ex.ToString())
+                    {
+                        yield return ex.ToString();
+                    }
+                }
+            }
         }
     }
 }
