@@ -15,8 +15,10 @@ namespace YPPcommand
         private double AVGsum;
         private DateTime date;
         private ArrayList examslist = new ArrayList();
+        private ArrayList tests = new ArrayList();   
+        private ArrayList exames = new ArrayList();
 
-        
+
         public Student(string name, string last_name, DateTime birthday, Education education, int nomergruppi, DateTime date, ArrayList examslist):base(name,last_name,birthday)
         {
             this.name = name;
@@ -40,6 +42,27 @@ namespace YPPcommand
             exams = new Exam[0];
             date = DateTime.Now;
         }
+
+        public ArrayList Tests
+        {
+            get { return tests; }
+            set
+            {
+                if (value == null) throw new Exception();
+                tests = value;
+            }
+        }
+
+        public ArrayList Exames
+        {
+            get { return exames; }
+            set
+            {
+                if (value == null) throw new Exception();
+                exames = value;
+            }
+        }
+
         public string Name
         {
             get { return name; }
@@ -224,7 +247,7 @@ namespace YPPcommand
             return new StudentEnumerator(examslist, exams);
         }
 
-        public IEnumerable GetTestsWithPassedExam()
+        public IEnumerable Getzachexam()
         {
             foreach (object test in examslist)
             {
@@ -237,7 +260,7 @@ namespace YPPcommand
                 }
             }
         }
-        public IEnumerable GetIntersectionSubjects()
+        public IEnumerable GetZachAndExam()
         {
             foreach (object test in examslist)
             {

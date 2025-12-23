@@ -25,9 +25,13 @@ namespace YPPcommand
             get
             {
                 if (inTests)
+                {
                     return tests[posTests];
+                }
                 else
+                {
                     return exams[posExams];
+                }
             }
         }
 
@@ -37,14 +41,18 @@ namespace YPPcommand
             {
                 posTests++;
                 if (posTests < tests.Count)
+                {
                     return true;
+                }
 
                 inTests = false;
                 posExams = 0;
             }
 
             if (exams == null)
+            {
                 return false;
+            }
 
             return posExams < exams.Length;
         }

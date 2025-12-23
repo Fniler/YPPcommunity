@@ -69,13 +69,24 @@ static void Main1()
 
     Student p1 = new Student();
 
-    foreach(object o in p1.GetEnumerable())
+    foreach(object a in p1.GetEnumerable())
     {
-        Console.WriteLine(o);
+        Console.WriteLine(a);
     }
 
     foreach(Exam ex in p1.GetExamAndZnach())
     {
         Console.WriteLine(ex);
     }
+
+    foreach (object o in p1.Getzachexam())
+    {
+        Console.WriteLine(o);
+    }
+
+    foreach (object c in p1.GetZachAndExam())
+    {
+        Console.WriteLine(c);
+    }
+
 }
