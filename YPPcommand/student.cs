@@ -1,277 +1,181 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace YPPcommand
 {
     class Student : Person, IDateAndCopy, IEnumerable
     {
         private Education education;
-        private int nomergruppi;
-        private Exam[] exams;
-        private double AVGsum;
+        private int groupNumber;
+        private ArrayList exams;   
+        private ArrayList tests;   
         private DateTime date;
-        private ArrayList examslist = new ArrayList();
-        private ArrayList tests = new ArrayList();   
-        private ArrayList exames = new ArrayList();
 
-
-        public Student(string name, string last_name, DateTime birthday, Education education, int nomergruppi, DateTime date, ArrayList examslist):base(name,last_name,birthday)
+        public Student(Person p, Education education, int groupNumber)
+            : base(p.Name, p.Last_Name, p.Birthday)
         {
-            this.name = name;
-            this.last_name = last_name;
-            this.birthday = birthday;
             this.education = education;
-            this.nomergruppi = nomergruppi;
-            this.date = date;
-            this.examslist = examslist;
+            GroupNumber = groupNumber;
+            exams = new ArrayList();
+            tests = new ArrayList();
+            date = DateTime.Now;
         }
 
-        public Student(string name, string last_name, DateTime birthday, Education education, int nomergruppi, DateTime date,ArrayList examslist,params Exam[] exams):this(name,last_name,birthday,education,nomergruppi, date, examslist) 
+        public Student(): base()
         {
-            this.exams = exams;
-        }
-        public Student()
-        {
-            Name = name;
             education = Education.Specialist;
-            nomergruppi = 4;
-            exams = new Exam[0];
+            groupNumber = 101;
+            exams = new ArrayList();
+            tests = new ArrayList();
             date = DateTime.Now;
+        }
+
+
+        public Education Education
+        {
+            get => education;
+            set => education = value;
+        }
+
+        public int GroupNumber
+        {
+            get => groupNumber;
+            set
+            {
+                if (value <= 100 || value > 599)
+                    throw new ArgumentOutOfRangeException(
+                        "GroupNumber",
+                        "Номер группы должен быть в диапазоне 101–599"
+                    );
+                groupNumber = value;
+            }
+        }
+
+        public ArrayList Exams
+        {
+            get => exams;
+            set => exams = value ?? throw new ArgumentNullException();
         }
 
         public ArrayList Tests
         {
-            get { return tests; }
-            set
-            {
-                if (value == null) throw new Exception();
-                tests = value;
-            }
+            get => tests;
+            set => tests = value ?? throw new ArgumentNullException();
         }
 
-        public ArrayList Exames
-        {
-            get { return exames; }
-            set
-            {
-                if (value == null) throw new Exception();
-                exames = value;
-            }
-        }
-
-        public string Name
-        {
-            get { return name; }
-            set
-            {
-                if (value != null)
-                {
-                    name = value;
-                }
-                else
-                {
-                    throw new Exception("Нет значения");
-                }
-            }
-        }
-        public string Last_Name
-        {
-            get { return last_name; }
-            set
-            {
-                if (value != null)
-                {
-                    last_name = value;
-                }
-                else
-                {
-                    throw new Exception("Нет значения");
-                }
-            }
-        }
-        public DateTime Birthday
-        {
-            get { return birthday; }
-            set
-            {
-                if (value.Year < 120)
-                {
-                    birthday = value;
-                }
-                else
-                {
-                    throw new Exception("Неверное значение");
-                }
-            }
-        }
-        public Exam[] Exams
-        {
-            get { return exams; }
-        }
-
-        public Education Education
-        {
-            get { return education; }
-            set { education = value; }
-        }
-
-        public int Nomergruppi
-        {
-            get { return nomergruppi; }
-            set {
-                if (value <= 100 || value > 599)
-                {
-                    throw new Exception();
-                }
-                nomergruppi = value; 
-            }
-        }
-
-        public Person Person
-        {
-            get { return new Person(name, last_name, birthday); }
-            set { name = value.Name; last_name = value.Last_Name; birthday = value.Birthday; }
-        }
-
-        public ArrayList Examslist
-        {
-            get { return examslist; } 
-            set {
-                if (value == null)
-                {
-                    throw new Exception();
-                }
-                examslist = value;
-            }
-        }
-
-        public double AVG
+        public double AverageMark
         {
             get
             {
-                if(exams!=null)
-                {
-                    AVGsum = 0;
-                    for (int i = 0; i < exams.Length; i++)
-                    {
-                        AVGsum += exams[i].Otsenka;
-                    }
-                    return AVGsum / exams.Length;
-                }
-                else
-                { return 0; }
+                if (exams.Count == 0) return 0;
+                double sum = 0;
+                foreach (Exam e in exams)
+                    sum += e.Otsenka;
+                return sum / exams.Count;
             }
         }
 
         public DateTime Date
         {
-            get { return date; }
-            set { date = value; }
+            get => date;
+            set => date = value;
         }
 
-        public object DeepCopy()
+        public Person Person
         {
-            return new Student(name, last_name, birthday, education, nomergruppi, date, examslist);
+            get => new Person(name, last_name, birthday);
+            set
+            {
+                name = value.Name;
+                last_name = value.Last_Name;
+                birthday = value.Birthday;
+            }
         }
 
-        public bool this[Education educa]
+
+        public void AddExams(params Exam[] newExams)
         {
-            get
-            {
-                return this.education == educa;
-            }
+            foreach (Exam e in newExams)
+                exams.Add(e);
         }
-        public void AddExams(params Exam[] newexam)
-        {
-            if (newexam == null || newexam.Length == 0)
-            {
-                return;
-            }
-            if (exams == null)
-            {
-                exams = new Exam[0];
-            }
-            int oldLength = exams.Length;
-            Array.Resize(ref exams, oldLength + newexam.Length);
-            for (int i = 0; i < newexam.Length; i++)
-            {
-                exams[oldLength + i] = newexam[i];
-            }
-        }
+
         public override string ToString()
         {
-            if (exams == null || exams.Length == 0)
-            {
-                return $"Форма обучения: {education}, Группа: {nomergruppi}\nЭкзамены: нет";
-            }
-            string rez = $" Форма обучения: {education}, Группа: {nomergruppi}\n";
-            foreach (var exam in exams)
-            {
-                if(exam != null)
-                {
-                    rez += exam.ToString()+"\n";
-                }
-            }
-            return rez;
+            string s = base.ToString();
+            s += $"\nEducation: {education}, Group: {groupNumber}\nExams:\n";
+            foreach (Exam e in exams)
+                s += e + "\n";
+            s += "Tests:\n";
+            foreach (Test t in tests)
+                s += t + "\n";
+            return s;
         }
+
         public virtual string ToShortString()
         {
-            return $"Форма обучения: {education}, Группа: {nomergruppi}, Средний балл: {AVG}";
+            return $"{base.ToShortString()}, Education: {education}, Group: {groupNumber}, Avg: {AverageMark}";
         }
 
-        public IEnumerable GetEnumerable()
+        public override object DeepCopy()
         {
-            foreach(object obj in examslist)
-            {
-                yield return obj;
-            }
-            foreach(Exam ex in exams)
-            {
-                yield return ex; 
-            }    
-        }
+            Student copy = new Student(this.Person, education, groupNumber);
+            copy.date = date;
 
-        public IEnumerable GetExamAndZnach()
-        {
-            foreach(Exam ex in exams)
-            {
-                yield return ex;
-            }
-        }
-        public IEnumerator GetEnumerator()
-        {
-            return new StudentEnumerator(examslist, exams);
-        }
+            foreach (Exam e in exams)
+                copy.exams.Add(e.DeepCopy());
 
-        public IEnumerable Getzachexam()
+            foreach (Test t in tests)
+                copy.tests.Add(t.DeepCopy());
+
+            return copy;
+        }
+        public IEnumerable ExamsAbove(int mark)
         {
-            foreach (object test in examslist)
+            foreach (Exam e in exams)
+                if (e.Otsenka > mark)
+                    yield return e;
+        }
+        public IEnumerable PassedTestsAndExams()
+        {
+            foreach (Test t in tests)
+                if (t.IsPassed)
+                    yield return t;
+
+            foreach (Exam e in exams)
+                if (e.Otsenka > 2)
+                    yield return e;
+        }
+        public IEnumerable PassedTestsWithPassedExam()
+        {
+            foreach (Test t in tests)
             {
-                foreach (Exam ex in exams)
+                if (!t.IsPassed) continue;
+
+                foreach (Exam e in exams)
                 {
-                    if (test.ToString() == ex.ToString())
+                    if (e.Otsenka > 2 && e.Namepredmet == t.Subject)
                     {
-                        yield return test;
+                        yield return t;
+                        break;
                     }
                 }
             }
         }
-        public IEnumerable GetZachAndExam()
+        public new IEnumerator GetEnumerator()
         {
-            foreach (object test in examslist)
+            foreach (Test t in tests)
             {
-                foreach (Exam ex in exams)
+                foreach (Exam e in exams)
                 {
-                    if (test.ToString() == ex.ToString())
+                    if (t.Subject == e.Namepredmet)
                     {
-                        yield return ex.ToString();
+                        yield return t.Subject;
+                        break;
                     }
                 }
             }
         }
+
     }
 }

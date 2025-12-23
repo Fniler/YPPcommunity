@@ -1,92 +1,59 @@
 ﻿using System.Data.Common;
 using YPPcommand;
 
-Main1();
-static void Main1()
+Main();
+static void Main()
 {
-    Console.WriteLine("Введите размерность массива Col - , Row - ");
-    string input = Console.ReadLine();
-    char[] separators = { ' ', ',', ';', '\t' };
-    string[] mass = input.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+    // Person Equals
+    Person p1 = new Person("Ivan", "Ivanov", new DateTime(2000, 1, 1));
+    Person p2 = new Person("Ivan", "Ivanov", new DateTime(2000, 1, 1));
 
-    int nrow = int.Parse(mass[0]);
-    int ncol = int.Parse(mass[1]);
-    Person[] MD1 = new Person[nrow * ncol];
-    for (int i = 0; i < MD1.Length; i++)
-    {
-        MD1.SetValue(new Person(), i);
-    }
-    Person[,] MD2 = new Person[nrow, ncol];
-    for (int i = 0; i < MD2.GetLength(0); i++)
-    {
-        for (int j = 0; j < MD2.GetLength(1); j++)
-        {
+    Console.WriteLine(p1 == p2);
+    Console.WriteLine(p1.GetHashCode());
+    Console.WriteLine(p2.GetHashCode());
 
-            MD2.SetValue(new Person(), i, j);
-        }
-    }
-    Person[][] MD2_j = new Person[nrow][];
-    for (int i = 0; i < MD2_j.GetLength(0); i++)
-    {
-        MD2_j.SetValue(new Person[ncol], i);
-        for (int j = 0; j < ncol; j++)
-        {
-            MD2_j[i][j] = new Person();
-        }
-    }
-    Console.WriteLine("Начало испытания для одномерного массива");
-    DateTime start = DateTime.Now;
-    foreach (var item in MD1)
-    {
-        item.Year = 100;
-    }
-    DateTime end = DateTime.Now;
-    TimeSpan total = end - start;
-    Console.WriteLine($"Конец испытания время:{total}");
+    // Student
+    Student st = new Student(p1, Education.Specialist, 201);
 
-    Console.WriteLine("Начало испытания для двумерного массива");
-    start = DateTime.Now;
-    foreach (var item in MD2)
+    st.Exams.Add(new Exam("Math", 5, DateTime.Now));
+    st.Exams.Add(new Exam("Physics", 3, DateTime.Now));
+
+    st.Tests.Add(new Test("Math", true));
+    st.Tests.Add(new Test("History", true));
+
+    Console.WriteLine(st);
+
+    // DeepCopy
+    Student copy = (Student)st.DeepCopy();
+    st.GroupNumber = 301;
+
+    Console.WriteLine("ORIGINAL:");
+    Console.WriteLine(st.ToShortString());
+
+    Console.WriteLine("COPY:");
+    Console.WriteLine(copy.ToShortString());
+
+    // Exception
+    try
     {
-        item.Year = 10;
+        st.GroupNumber = 50;
     }
-    end = DateTime.Now;
-    total = end - start;
-    Console.WriteLine($"Конец испытания время:{total}");
-
-    Console.WriteLine("Начало испытания для двумерного массива котрый ступнчатый");
-    start = DateTime.Now;
-    foreach (var item1 in MD2_j)
+    catch (Exception ex)
     {
-        foreach (var item2 in item1)
-        {
-            item2.Year = 52;
-        }
-    }
-    end = DateTime.Now;
-    total = end - start;
-    Console.WriteLine($"Конец испытания время:{total}");
-
-    Student p1 = new Student();
-
-    foreach(object a in p1.GetEnumerable())
-    {
-        Console.WriteLine(a);
+        Console.WriteLine(ex.Message);
     }
 
-    foreach(Exam ex in p1.GetExamAndZnach())
-    {
-        Console.WriteLine(ex);
-    }
+    // Итераторы
+    Console.WriteLine("Пересечение предметов:");
+    foreach (string s in st)
+        Console.WriteLine(s);
 
-    foreach (object o in p1.Getzachexam())
-    {
+    Console.WriteLine("Сданные зачеты и экзамены:");
+    foreach (object o in st.PassedTestsAndExams())
         Console.WriteLine(o);
-    }
 
-    foreach (object c in p1.GetZachAndExam())
-    {
-        Console.WriteLine(c);
-    }
-
+    Console.WriteLine("Сданные зачеты с сданным экзаменом:");
+    foreach (Test t in st.PassedTestsWithPassedExam())
+        Console.WriteLine(t);
 }
+
